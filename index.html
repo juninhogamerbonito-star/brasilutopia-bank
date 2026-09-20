@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brasiltopia Bank — Corporativo</title>
+    <title>Brasiltopia Bank — Premium</title>
     <style>
         :root {
             --bg-app: #f4f6f9;
-            --brand-main: #5f259f; /* Roxo Premium sutil inspirado em fintechs */
+            --brand-main: #5f259f; 
             --brand-gradient: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
             --card-white: #ffffff;
             --text-main: #1e293b;
@@ -43,7 +43,6 @@
         .nav-links a { color: var(--brand-main); cursor: pointer; text-decoration: none; font-weight: 600; margin-left: 4px; }
         .nav-links a:hover { text-decoration: underline; }
         
-        /* NU-CARD DESIGN (CONTA PREMIUM) */
         .nu-card { background: var(--brand-gradient); padding: 24px; border-radius: 20px; margin-bottom: 24px; color: #ffffff; position: relative; overflow: hidden; box-shadow: 0 8px 24px rgba(109, 40, 217, 0.15); }
         .nu-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.04); border-radius: 50%; }
         .nu-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; opacity: 0.8; letter-spacing: 1px; }
@@ -55,7 +54,6 @@
         .section-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 12px; padding-left: 2px; }
         .app-box { background: #f8fafc; padding: 16px; border-radius: 18px; border: 1px solid var(--border-soft); margin-bottom: 20px; }
         
-        /* EXTRATO FLUIDO */
         .extrato-container { max-height: 160px; overflow-y: auto; padding-right: 4px; }
         .extrato-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
         .extrato-item:last-child { border-bottom: none; }
@@ -66,7 +64,6 @@
         .extrato-desc { font-weight: 500; color: #334155; }
         .extrato-val { font-weight: 600; text-align: right; }
         
-        /* ADMIN VIEW */
         .admin-grid { display: flex; gap: 16px; margin-bottom: 24px; }
         .admin-grid .nu-card { flex: 1; margin-bottom: 0; }
         .table-wrapper { overflow-x: auto; background: #ffffff; border-radius: 16px; border: 1px solid var(--border-soft); }
@@ -161,7 +158,7 @@
         <header>
             <span class="logo-tag" style="background: rgba(212, 138, 0, 0.1); color: var(--gold);">Painel Central</span>
             <h1>Sala de Auditoria do Bluezin</h1>
-            <p>Controle global monetário integrado na nuvem</p>
+            <p>Controle global monetário integrado na rede</p>
         </header>
         <div class="admin-grid">
             <div class="nu-card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
@@ -181,7 +178,7 @@
             </div>
             <button class="btn-primary" onclick="handleAdminInject()" style="margin-top: 12px;">Autorizar Emissão de Crédito</button>
         </div>
-        <div class="section-title">Contas Ativas no Servidor Geral</div>
+        <div class="section-title">Contas Ativas no Servidor Geral (Todas as Contas)</div>
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -193,59 +190,44 @@
         <button class="btn-outline" onclick="logoutAdmin()" style="margin-top: 24px;">Fechar Painel de Auditoria</button>
     </div>
     <script>
-        // Sistema de Nuvem Livre e Automatizado usando JSONbin
-        var BIN_URL = "https://jsonbin.io";
-        var MASTER_KEY = "$2a$10$WpZ6G/0F08GfeFsc9v36Q.YvB5f.POn3v6D7pA8oWz35VqF.vI3O2"; // Chave pública de leitura/escrita rápida
-        
-        var accounts = { "Bluezin": { password: "", balance: Infinity, approved: true, history: [] } };
+        // Carrega do localStorage local estável - Rápido e Sem Erros
+        var accounts = JSON.parse(localStorage.getItem('brasiltopia_accounts')) || { 
+            "Bluezin": { password: "", balance: Infinity, approved: true, history: [] } 
+        };
         var currentSessionUser = null;
 
-        // Puxa as contas registradas na nuvem global assim que abre o site
-        async function loadCloudData() {
-            try {
-                let response = await fetch(BIN_URL + "/latest", {
-                    headers: { "X-Master-Key": MASTER_KEY }
-                });
-                let resData = await response.json();
-                if (resData.record && Object.keys(resData.record).length > 0) {
-                    accounts = resData.record;
-                    // Garante que o Bluezin nunca suma das contas master
-                    if (!accounts["Bluezin"]) accounts["Bluezin"] = { password: "", balance: Infinity, approved: true, history: [] };
-                }
-            } catch (e) { console.log("Rodando em modo de contingência local"); }
+        function saveToStorage() {
+            localStorage.setItem('brasiltopia_accounts', JSON.stringify(accounts));
         }
 
-        // Envia as novas contas e saldos para a nuvem global em tempo real
-        async function saveCloudData() {
-            try {
-                await fetch(BIN_URL, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Master-Key": MASTER_KEY
-                    },
-                    body: JSON.stringify(accounts)
-                });
-            } catch (e) { console.log("Erro ao sincronizar com a nuvem."); }
+        function switchScreen(screenId) {
+            if (screenId === 'screenAdmin') {
+                document.getElementById('mainContainer').style.display = 'none';
+                document.getElementById('screenAdmin').style.display = 'block';
+            } else {
+                document.getElementById('mainContainer').style.display = 'block';
+                document.getElementById('screenAdmin').style.display = 'none';
+                var screens = document.querySelectorAll('#mainContainer .screen');
+                for (var i = 0; i < screens.length; i++) { screens[i].style.display = 'none'; }
+                document.getElementById(screenId).style.display = 'block';
+            }
         }
 
-        async function handleRegister() {
+        function handleRegister() {
             var user = document.getElementById('regUser').value.trim();
             var pass = document.getElementById('regPass').value.trim();
             var btn = document.getElementById('btnRegister');
             
             if (!user || !pass) { alert('Erro: Preencha todos os campos!'); return; }
             if (user.toLowerCase() === "bluezin") { alert('Erro: Nome reservado.'); return; }
+            if (accounts[user]) { alert('Erro: Essa conta já existe!'); return; }
             
-            await loadCloudData(); // Atualiza a lista antes de salvar para não atropelar ninguém
-            if (accounts[user]) { alert('Erro: Essa conta já existe no país!'); return; }
-            
-            btn.innerText = "Conectando ao Banco Central...";
+            btn.innerText = "Criando registro...";
             btn.disabled = true;
 
-            setTimeout(async function() {
+            setTimeout(function() {
                 accounts[user] = { password: pass, balance: 0, approved: true, history: [] };
-                await saveCloudData(); // Salva na nuvem global
+                saveToStorage();
                 
                 alert('Sua conta foi criada! Parabens!');
                 
@@ -257,7 +239,7 @@
                 
                 switchScreen('screenDashboard');
                 updateDashboard();
-            }, 1000);
+            }, 1000); // 1 segundo exato de processamento
         }
 
         function handleLogin() {
@@ -273,7 +255,7 @@
         function updateDashboard() {
             document.getElementById('accountOwner').innerText = 'Olá, ' + currentSessionUser;
             var bal = accounts[currentSessionUser].balance;
-            document.getElementById('accountBalance').innerText = bal === Infinity ? 'Infinito' : 'R$ ' + bal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('accountBalance').innerText = bal === Infinity ? 'Infinito' : 'R\$ ' + bal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
             renderExtrato();
         }
 
@@ -306,14 +288,12 @@
             }
         }
 
-        async function handleTransfer() {
+        function handleTransfer() {
             var target = document.getElementById('pixTarget').value.trim();
             var amount = parseFloat(document.getElementById('pixAmount').value);
             if (!target || isNaN(amount) || amount <= 0) { alert('Dados inválidos!'); return; }
-            if (target === currentSessionUser) { alert('Não pode transferir para você mesmo!'); return; }
-            
-            await loadCloudData(); // Puxa saldos atualizados da nuvem
-            if (!accounts[target]) { alert('Cidadão destinatário não encontrado!'); return; }
+            if (target === currentSessionUser) { alert('Não pode fazer Pix para você mesmo!'); return; }
+            if (!accounts[target]) { alert('Cidadão não encontrado!'); return; }
             if (accounts[currentSessionUser].balance !== Infinity && accounts[currentSessionUser].balance < amount) { alert('Saldo insuficiente!'); return; }
 
             if (accounts[currentSessionUser].balance !== Infinity) accounts[currentSessionUser].balance -= amount;
@@ -325,18 +305,17 @@
             accounts[currentSessionUser].history.push({ type: 'Saída', amount: amount, desc: 'Pix enviado para ' + target });
             accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Pix recebido de ' + currentSessionUser });
 
-            await saveCloudData(); // Grava na nuvem para o mundo todo ver
-            alert('Pix Realizado com sucesso!');
+            saveToStorage();
+            alert('Pix enviado com sucesso!');
             document.getElementById('pixTarget').value = '';
             document.getElementById('pixAmount').value = '';
             updateDashboard();
         }
 
-        async function openAdminModal() {
+        function openAdminModal() {
             var masterPass = prompt("Autenticação Root Magistrado:");
             if (masterPass === "Brasiltopia303526") {
                 currentSessionUser = "Bluezin";
-                await loadCloudData(); // Atualiza a tabela com TODAS as contas criadas na nuvem
                 switchScreen('screenAdmin');
                 renderAdminTable();
             } else { alert("Acesso negado."); }
@@ -350,7 +329,7 @@
                 var user = keys[i];
                 if (user === "Bluezin") continue;
                 var acc = accounts[user];
-                var balShow = acc.balance === Infinity ? 'Infinito' : 'R$ ' + acc.balance.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                var balShow = acc.balance === Infinity ? 'Infinito' : 'R\$ ' + acc.balance.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                 var tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${user}</strong></td>
@@ -362,26 +341,26 @@
             }
         }
 
-        async function adminDelete(user) {
-            if(confirm('Remover o cidadão ' + user + ' da nuvem nacional?')) {
+        function adminDelete(user) {
+            if(confirm('Remover o cidadão ' + user + ' do sistema?')) {
                 delete accounts[user];
-                await saveCloudData();
+                saveToStorage();
                 renderAdminTable();
             }
         }
 
-        async function handleAdminInject() {
+        function handleAdminInject() {
             var target = document.getElementById('adminTarget').value.trim();
             var amount = parseFloat(document.getElementById('adminAmount').value);
-            if (!accounts[target]) { alert('Cidadão não encontrado na nuvem!'); return; }
+            if (!accounts[target]) { alert('Cidadão não encontrado!'); return; }
             if (isNaN(amount) || amount <= 0) { alert('Valor inválido!'); return; }
             
             if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
             accounts[target].history = accounts[target].history || [];
             accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Injeção de Capital Root' });
             
-            await saveCloudData();
-            alert('Capital injetado com sucesso!');
+            saveToStorage();
+            alert('Capital emitido com sucesso!');
             document.getElementById('adminTarget').value = '';
             document.getElementById('adminAmount').value = '';
             renderAdminTable();
@@ -389,5 +368,6 @@
 
         function logout() { currentSessionUser = null; switchScreen('screenLogin'); }
         function logoutAdmin() { currentSessionUser = null; switchScreen('screenLogin'); }
-
-        // Dá o gatilho de leitura ao carregar o site
+    </script>
+</body>
+</html>
