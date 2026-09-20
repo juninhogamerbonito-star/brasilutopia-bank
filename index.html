@@ -3,128 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brasiltopia Bank</title>
+    <title>Brasiltopia Bank — Sistema Nacional</title>
     <style>
-        :root { --bg: #0a192f; --card: #172a45; --accent: #00b4d8; --gold: #ffb703; --success: #2ec4b6; --danger: #e63946; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: var(--bg); color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { background: var(--card); padding: 30px; border-radius: 12px; width: 100%; max-width: 440px; border: 1px solid #233554; }
-        .admin-container { max-width: 800px; width: 100%; }
-        header { text-align: center; margin-bottom: 20px; }
-        h1 { color: #fff; font-size: 24px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #8892b0; font-size: 12px; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; background: var(--bg); border: 1px solid #233554; border-radius: 6px; color: #fff; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-primary { background: var(--accent); color: var(--bg); }
-        .btn-success { background: var(--success); color: var(--bg); }
-        .btn-outline { background: transparent; color: #8892b0; border: 1px solid #233554; }
-        .btn-admin { background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-top: 20px; }
+        :root {
+            --bg-main: #ffffff;
+            --card-white: rgba(240, 244, 248, 0.85);
+            --green-accent: #0077b6;
+            --gold: #d48a00;
+            --success: #0096c7;
+            --danger: #d90429;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(0, 119, 182, 0.25);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: radial-gradient(circle at center, #f8fafc 0%, var(--bg-main) 100%); color: var(--text-dark); display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: var(--card-white); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 40px 30px; border-radius: 20px; width: 100%; max-width: 450px; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.6); }
+        .admin-container { max-width: 900px; width: 100%; background: var(--card-white); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 40px 30px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(15,23,42,0.08); }
+        header { text-align: center; margin-bottom: 30px; }
+        .logo-icon { font-size: 45px; margin-bottom: 8px; filter: drop-shadow(0 4px 6px rgba(0,119,182,0.15)); }
+        h1 { color: var(--text-dark); font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        input { width: 100%; padding: 14px; background: rgba(255, 255, 255, 0.9); border: 1px solid #cbd5e1; border-radius: 10px; color: var(--text-dark); font-size: 15px; transition: 0.3s; }
+        input:focus { outline: none; border-color: var(--green-accent); box-shadow: 0 0 15px rgba(0,119,182,0.15); }
+        button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-primary { background: linear-gradient(90deg, #0077b6, #0096c7); color: #ffffff; box-shadow: 0 4px 14px rgba(0,119,182,0.25); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,119,182,0.35); }
+        .btn-success { background: linear-gradient(90deg, #03045e, #0077b6); color: #ffffff; box-shadow: 0 4px 14px rgba(3,4,94,0.2); }
+        .btn-success:hover { transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: var(--text-muted); border: 1px solid #cbd5e1; }
+        .btn-outline:hover { background: rgba(0,0,0,0.03); color: var(--text-dark); }
+        .btn-admin { background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-top: 25px; font-size: 12px; letter-spacing: 0.5px; }
+        .btn-admin:hover { background: rgba(212,138,0,0.05); }
         .screen { display: none; }
         .active { display: block; }
-        .nav-links { margin-top: 15px; text-align: center; font-size: 14px; }
-        .nav-links a { color: var(--accent); cursor: pointer; text-decoration: none; }
-        .balance-card { background: linear-gradient(135deg, #1e3a8a, #0d9488); padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: left; }
-        .balance-card .amount { font-size: 32px; font-weight: bold; margin-top: 5px; color: #fff; }
-        .transaction-box, .injection-box { background: rgba(35,53,84,0.3); padding: 15px; border-radius: 8px; border: 1px solid #233554; margin-bottom: 15px; }
-        .admin-grid { display: flex; gap: 15px; margin-bottom: 20px; }
-        .table-wrapper { overflow-x: auto; background: rgba(10,25,47,0.5); border-radius: 6px; }
+        .nav-links { margin-top: 20px; text-align: center; font-size: 14px; }
+        .nav-links a { color: var(--green-accent); cursor: pointer; text-decoration: none; font-weight: 600; }
+        .nav-links a:hover { text-decoration: underline; }
+        .v-card { background: linear-gradient(135deg, #03045e 0%, #0077b6 50%, #0096c7 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(3,4,94,0.25); border: 1px solid rgba(255,255,255,0.1); }
+        .v-card::after { content: '🔰'; position: absolute; right: -15px; bottom: -15px; font-size: 100px; opacity: 0.08; }
+        .v-card-logo { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold; letter-spacing: 1px; color: rgba(255,255,255,0.9); }
+        .v-card-chip { width: 40px; height: 30px; background: linear-gradient(135deg, #ffb703, #fd9e02); border-radius: 6px; margin: 20px 0 10px 0; position: relative; }
+        .v-card .amount { font-size: 34px; font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 5px; }
+        .v-card .owner-name { font-size: 14px; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 1px; }
+        .transaction-box, .injection-box { background: rgba(255, 255, 255, 0.7); padding: 20px; border-radius: 12px; border: 1px solid rgba(203, 213, 225, 0.6); margin-bottom: 20px; }
+        .transaction-box h3, .injection-box h3 { font-size: 16px; margin-bottom: 15px; color: var(--text-dark); font-weight: 700; }
+        .admin-grid { display: flex; gap: 20px; margin-bottom: 25px; }
+        .admin-grid .v-card { flex: 1; margin-bottom: 0; }
+        .table-wrapper { overflow-x: auto; background: #ffffff; border-radius: 10px; border: 1px solid #e2e8f0; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 12px; font-size: 14px; border-bottom: 1px solid #233554; color: #fff; }
-        th { background: rgba(35,53,84,0.5); color: #8892b0; }
-        .badge { padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
-        .badge-pending { background: rgba(255,183,3,0.15); color: var(--gold); }
-        .badge-approved { background: rgba(46,196,182,0.15); color: var(--success); }
-        .actions-btn { padding: 4px 8px; font-size: 12px; width: auto; margin-right: 5px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; display: inline-block; }
-        .btn-approve { background: var(--success); color: var(--bg); }
-        .btn-reject { background: var(--gold); color: var(--bg); }
+        th, td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid #e2e8f0; color: var(--text-dark); }
+        th { background: #f1f5f9; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-pending { background: rgba(212,138,0,0.1); color: var(--gold); border: 1px solid rgba(212,138,0,0.2); }
+        .badge-approved { background: rgba(0,150,199,0.1); color: var(--green-accent); border: 1px solid rgba(0,150,199,0.2); }
+        .actions-btn { padding: 6px 12px; font-size: 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 700; display: inline-block; margin-right: 5px; }
+        .btn-approve { background: #0077b6; color: #ffffff; }
+        .btn-reject { background: #ffb703; color: #000; }
         .btn-delete { background: var(--danger); color: #fff; }
+        .extrato-wrapper { max-height: 180px; overflow-y: auto; margin-top: 10px; }
+        .extrato-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: var(--text-dark); }
+        .extrato-item:last-child { border-bottom: none; }
+        .text-entrada { color: #0d9488; font-weight: 600; }
+        .text-saida { color: var(--danger); font-weight: 600; }
     </style>
 </head>
 <body>
+    <!-- CONTAINER DO CLIENTE -->
     <div class="container" id="mainContainer">
         <header>
+            <div class="logo-icon">🔰</div>
             <h1>Brasiltopia Bank</h1>
-            <p style="color: #8892b0; font-size: 14px;">Sistema Financeiro</p>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px; letter-spacing: 0.5px;">Sistema Corporativo Nacional</p>
         </header>
+
+        <!-- LOGIN -->
         <div id="screenLogin" class="screen active">
             <div class="form-group">
                 <label>Nome do Usuário</label>
-                <input type="text" id="loginUser" placeholder="Digite seu usuário">
+                <input type="text" id="loginUser" placeholder="Ex: Pedro_Silva">
             </div>
             <div class="form-group">
                 <label>Senha de Acesso</label>
-                <input type="password" id="loginPass" placeholder="Digite sua senha">
+                <input type="password" id="loginPass" placeholder="••••••••">
             </div>
-            <button class="btn-primary" onclick="handleLogin()">Entrar</button>
+            <button class="btn-primary" onclick="handleLogin()">Acessar Conta</button>
             <div class="nav-links">
-                <p>Novo por aqui? <a onclick="switchScreen('screenRegister')">Criar conta</a></p>
+                <p>Não tem conta? <a onclick="switchScreen('screenRegister')">Abrir Conta Corrente</a></p>
             </div>
-            <button class="btn-admin" onclick="openAdminModal()">💼 PAINEL DE ADMINISTRAÇÃO</button>
+            <button class="btn-admin" onclick="openAdminModal()">💼 SOLICITAR LOGIN INTEGRADO ROOT</button>
         </div>
+
+        <!-- CADASTRO -->
         <div id="screenRegister" class="screen">
             <div class="form-group">
                 <label>Nome de Usuário Desejado</label>
-                <input type="text" id="regUser" placeholder="Ex: Pedro">
+                <input type="text" id="regUser" placeholder="Ex: Pedro_Silva">
             </div>
             <div class="form-group">
-                <label>Defina sua Senha</label>
-                <input type="password" id="regPass" placeholder="Mínimo 4 dígitos">
+                <label>Senha de Acesso</label>
+                <input type="password" id="regPass" placeholder="Mínimo 4 caracteres">
             </div>
-            <button class="btn-primary" onclick="handleRegister()">Submeter ao Bluezin</button>
-            <div class="nav-links"><a onclick="switchScreen('screenLogin')"> Voltar</a></div>
+            <button class="btn-primary" onclick="handleRegister()">Submeter Registro ao Bluezin</button>
+            <div class="nav-links">
+                <a onclick="switchScreen('screenLogin')">⬅ Voltar para o Login</a>
+            </div>
         </div>
+
+        <!-- DASHBOARD CLIENTE -->
         <div id="screenDashboard" class="screen">
-            <div class="balance-card">
-                <div id="accountOwner">Olá</div>
+            <div class="v-card">
+                <div class="v-card-logo">
+                    <span>BRASILTOPIA PREMIUM</span>
+                    <span>🔰</span>
+                </div>
+                <div class="v-card-chip"></div>
                 <div class="amount" id="accountBalance">R$ 0,00</div>
+                <div class="owner-name" id="accountOwner">Olá, Jogador</div>
             </div>
+
             <div class="transaction-box">
-                <h3 style="font-size: 16px; margin-bottom: 10px;">Enviar Pix</h3>
+                <h3>Área Pix Instantâneo</h3>
                 <div class="form-group">
-                    <label>Conta Destino</label>
-                    <input type="text" id="pixTarget" placeholder="Nome exato">
+                    <label>Conta do Destinatário</label>
+                    <input type="text" id="pixTarget" placeholder="Nome exato da conta">
                 </div>
                 <div class="form-group">
-                    <label>Valor (R$)</label>
-                    <input type="number" id="pixAmount" placeholder="0,00">
+                    <label>Valor da Transferência</label>
+                    <input type="number" id="pixAmount" placeholder="R$ 0,00">
                 </div>
-                <button class="btn-success" onclick="handleTransfer()">Transferir</button>
+                <button class="btn-success" onclick="handleTransfer()">Confirmar Envio</button>
             </div>
-            <button class="btn-outline" onclick="logout()">Sair</button>
+
+            <div class="transaction-box">
+                <h3>Extrato de Movimentações</h3>
+                <div class="extrato-wrapper" id="extratoList">
+                    <div style="color: var(--text-muted); text-align: center; padding-top: 15px; font-size: 13px;">Nenhuma transação registrada.</div>
+                </div>
+            </div>
+            <button class="btn-outline" onclick="logout()">Desconectar System</button>
         </div>
     </div>
-    <div class="container admin-container screen" id="screenAdmin">
-        <header><h1>Painel do Magistrado Bluezin</h1></header>
+
+    <!-- TELA DO ADMINISTRADOR -->
+    <div class="admin-container screen" id="screenAdmin">
+        <header>
+            <div class="logo-icon">👑</div>
+            <h1>Painel do Magistrado Bluezin</h1>
+            <p style="color: var(--text-muted); font-size: 14px;">Auditoria Governamental e Controle de Moeda</p>
+        </header>
         <div class="admin-grid">
-            <div class="balance-card" style="flex:1; background: #233554; padding: 20px;">
-                <div>Permissão</div>
-                <div style="font-size: 20px; font-weight: bold; margin-top:5px;">Diretor Root</div>
+            <div class="v-card" style="background: linear-gradient(135deg, #475569, #334155);">
+                <div class="v-card-logo">NÍVEL DE PERMISSÃO</div>
+                <div class="amount" style="font-size: 24px; margin-top: 15px; color: #ffb703;">Diretor Root Magistrado</div>
             </div>
-            <div class="balance-card" style="flex:1; background: #14532d; padding: 20px;">
-                <div>Seu Saldo</div>
-                <div class="amount" style="font-size: 24px;">Inf</div>
+            <div class="v-card" style="background: linear-gradient(135deg, #0f766e, #115e59);">
+                <div class="v-card-logo">RESERVA MONETÁRIA CENTRAL</div>
+                <div class="amount" style="font-size: 32px; color: #ccfbf1; margin-top: 10px;">Infinito</div>
             </div>
         </div>
         <div class="injection-box">
-            <h3 style="font-size: 16px; margin-bottom: 10px;">Injetar Saldo</h3>
-            <div class="injection-form">
-                <input type="text" id="adminTarget" placeholder="Usuário" style="margin-bottom: 10px;">
-                <input type="number" id="adminAmount" placeholder="Valor (R$)" style="margin-bottom: 10px;">
-                <button class="btn-primary" onclick="handleAdminInject()">Confirmar Injeção</button>
+            <h3>Emissão Monetária Primária (Injetar Capital)</h3>
+            <div class="form-group">
+                <input type="text" id="adminTarget" placeholder="Usuário beneficiário" style="margin-bottom: 12px;">
+                <input type="number" id="adminAmount" placeholder="Quantidade de Capital (R$)">
+                <button class="btn-primary" onclick="handleAdminInject()">Confirmar Injeção Monetária</button>
             </div>
         </div>
-        <h3 style="margin-bottom: 10px;">Contas do Servidor</h3>
+        <h3 style="margin-bottom: 15px; font-weight: 700;">Contas Cadastradas no País</h3>
         <div class="table-wrapper">
             <table>
-                <thead><tr><th>Cidadão</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
+                <thead>
+                    <tr><th>Cidadão</th><th>Saldo em Conta</th><th>Status Cadastral</th><th>Julgamento Governamental</th></tr>
+                </thead>
                 <tbody id="adminTableBody"></tbody>
             </table>
         </div>
-        <button class="btn-outline" onclick="logoutAdmin()" style="margin-top:20px;">Fechar Painel</button>
+        <button class="btn-outline" onclick="logoutAdmin()" style="margin-top: 25px; max-width: 250px; display: block; margin-left: auto; margin-right: auto;">Encerrar Sessão Root</button>
     </div>
     <script>
-        var accounts = { "Bluezin": { password: "", balance: Infinity, approved: true } };
+        var accounts = { "Bluezin": { password: "", balance: Infinity, approved: true, history: [] } };
         var currentSessionUser = null;
 
         function switchScreen(screenId) {
@@ -143,10 +202,12 @@
         function handleRegister() {
             var user = document.getElementById('regUser').value.trim();
             var pass = document.getElementById('regPass').value.trim();
-            if (!user || !pass) { alert('Preencha os campos!'); return; }
-            if (accounts[user]) { alert('Esta conta já existe!'); return; }
-            accounts[user] = { password: pass, balance: 0, approved: false };
-            alert('Enviado! Aguarde a aprovação do Bluezin.');
+            if (!user || !pass) { alert('Erro: Preencha todos os campos cadastrais!'); return; }
+            if (user.toLowerCase() === "bluezin") { alert('Erro: Nome de usuário reservado ao Magistrado Supremo.'); return; }
+            if (accounts[user]) { alert('Erro: Este cidadão já possui conta registrada!'); return; }
+            
+            accounts[user] = { password: pass, balance: 0, approved: false, history: [] };
+            alert('Cadastro submetido com sucesso! Aguarde a homologação do Diretor Bluezin.');
             document.getElementById('regUser').value = '';
             document.getElementById('regPass').value = '';
             switchScreen('screenLogin');
@@ -155,36 +216,67 @@
         function handleLogin() {
             var user = document.getElementById('loginUser').value.trim();
             var pass = document.getElementById('loginPass').value.trim();
-            if (!accounts[user] || accounts[user].password !== pass) { alert('Usuário ou senha incorretos.'); return; }
-            if (!accounts[user].approved) { alert('Conta pendente de aprovação do Bluezin!'); return; }
+            if (!accounts[user] || accounts[user].password !== pass) { alert('Acesso Negado: Usuário ou senha incorretos.'); return; }
+            if (!accounts[user].approved) { alert('Acesso Bloqueado: Sua conta ainda não foi homologada pelo Magistrado Bluezin!'); return; }
+            
             currentSessionUser = user;
             switchScreen('screenDashboard');
+            updateDashboard();
+        }
+
+        function updateDashboard() {
             document.getElementById('accountOwner').innerText = 'Olá, ' + currentSessionUser;
             var bal = accounts[currentSessionUser].balance;
-            document.getElementById('accountBalance').innerText = 'R$ ' + bal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('accountBalance').innerText = bal === Infinity ? 'Infinito' : 'R$ ' + bal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            renderExtrato();
+        }
+
+        function renderExtrato() {
+            var list = document.getElementById('extratoList');
+            list.innerHTML = '';
+            var hist = accounts[currentSessionUser].history || [];
+            if (hist.length === 0) {
+                list.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding-top: 15px; font-size: 13px;">Nenhuma movimentação recente.</div>';
+                return;
+            }
+            for (var i = hist.length - 1; i >= 0; i--) {
+                var item = hist[i];
+                var div = document.createElement('div');
+                div.className = 'extrato-item';
+                var classText = item.type === 'Entrada' ? 'text-entrada' : 'text-saida';
+                var sinal = item.type === 'Entrada' ? '+' : '-';
+                div.innerHTML = '<span>' + item.desc + '</span><span class="' + classText + '">' + sinal + ' R$ ' + item.amount.toFixed(2) + '</span>';
+                list.appendChild(div);
+            }
         }
 
         function handleTransfer() {
             var target = document.getElementById('pixTarget').value.trim();
             var amount = parseFloat(document.getElementById('pixAmount').value);
-            if (!target || isNaN(amount) || amount <= 0) { alert('Valores inválidos!'); return; }
-            if (!accounts[target] || !accounts[target].approved) { alert('Destino inválido!'); return; }
-            if (accounts[currentSessionUser].balance < amount) { alert('Saldo insuficiente!'); return; }
-            accounts[currentSessionUser].balance -= amount;
-            accounts[target].balance += amount;
-            alert('Pix enviado!');
+            if (!target || isNaN(amount) || amount <= 0) { alert('Operação Inválida: Verifique os dados inseridos.'); return; }
+            if (target === currentSessionUser) { alert('Operação Recusada: Não é permitido fazer Pix para si mesmo.'); return; }
+            if (!accounts[target] || !accounts[target].approved) { alert('Erro na Transação: Destinatário não localizado ou conta bloqueada.'); return; }
+            if (accounts[currentSessionUser].balance !== Infinity && accounts[currentSessionUser].balance < amount) { alert('Saldo Insuficiente: Capital disponível abaixo do valor solicitado.'); return; }
+
+            if (accounts[currentSessionUser].balance !== Infinity) accounts[currentSessionUser].balance -= amount;
+            if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
+
+            accounts[currentSessionUser].history.push({ type: 'Saída', amount: amount, desc: 'Pix enviado para ' + target });
+            accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Pix recebido de ' + currentSessionUser });
+
+            alert('Pix Realizado! R$ ' + amount.toFixed(2) + ' foram transferidos para ' + target + ' com sucesso.');
             document.getElementById('pixTarget').value = '';
             document.getElementById('pixAmount').value = '';
-            document.getElementById('accountBalance').innerText = 'R$ ' + accounts[currentSessionUser].balance.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            updateDashboard();
         }
 
         function openAdminModal() {
-            var masterPass = prompt("Insira a Senha Mestra:");
+            var masterPass = prompt("Autenticação Root: Digite a Senha Mestra de Administração:");
             if (masterPass === "Brasiltopia303526") {
                 currentSessionUser = "Bluezin";
                 switchScreen('screenAdmin');
                 renderAdminTable();
-            } else { alert("Senha incorreta!"); }
+            } else { alert("Falha crítica: Senha mestra incorreta. Tentativa registrada."); }
         }
 
         function renderAdminTable() {
@@ -195,26 +287,30 @@
                 var user = keys[i];
                 if (user === "Bluezin") continue;
                 var acc = accounts[user];
-                var badge = acc.approved ? '<span class="badge badge-approved">Ativa</span>' : '<span class="badge badge-pending">Pendente</span>';
+                var badge = acc.approved ? '<span class="badge badge-approved">Homologada</span>' : '<span class="badge badge-pending">Pendente</span>';
                 var actionBtn = !acc.approved ? 
                     '<button class="actions-btn btn-approve" onclick="adminToggleStatus(\''+user+'\', true)">Aprovar</button>' : 
                     '<button class="actions-btn btn-reject" onclick="adminToggleStatus(\''+user+'\', false)">Bloquear</button>';
+                var balShow = acc.balance === Infinity ? 'Infinito' : 'R$ ' + acc.balance.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                 var tr = document.createElement('tr');
-                tr.innerHTML = '<td>' + user + '</td><td>R$ ' + acc.balance + '</td><td>' + badge + '</td><td>' + actionBtn + '<button class="actions-btn btn-delete" onclick="adminDelete(\''+user+'\')">Deletar</button></td>';
+                tr.innerHTML = '<td><strong>' + user + '</strong></td><td>' + balShow + '</td><td>' + badge + '</td><td>' + actionBtn + '<button class="actions-btn btn-delete" onclick="adminDelete(\''+user+'\')">Deletar permanentemente</button></td>';
                 tbody.appendChild(tr);
             }
         }
 
         function adminToggleStatus(user, status) { accounts[user].approved = status; renderAdminTable(); }
-        function adminDelete(user) { delete accounts[user]; renderAdminTable(); }
+        function adminDelete(user) { if(confirm('Remover o cidadão ' + user + ' do banco de dados nacional?')) { delete accounts[user]; renderAdminTable(); } }
 
         function handleAdminInject() {
             var target = document.getElementById('adminTarget').value.trim();
             var amount = parseFloat(document.getElementById('adminAmount').value);
-            if (!accounts[target]) { alert('Usuário não achado!'); return; }
-            if (isNaN(amount) || amount <= 0) { alert('Valor inválido!'); return; }
-            accounts[target].balance += amount;
-            alert('Injetado!');
+            if (!accounts[target]) { alert('Erro de Emissão: Cidadão beneficiário não localizado no sistema.'); return; }
+            if (isNaN(amount) || amount <= 0) { alert('Erro: Quantidade monetária inválida.'); return; }
+            
+            if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
+            accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Capital injetado pelo Banco Central' });
+            
+            alert('Sucesso! R$ ' + amount.toLocaleString('pt-BR') + ' foram injetados no saldo de ' + target + '.');
             document.getElementById('adminTarget').value = '';
             document.getElementById('adminAmount').value = '';
             renderAdminTable();
@@ -225,4 +321,3 @@
     </script>
 </body>
 </html>
-
