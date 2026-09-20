@@ -18,7 +18,7 @@
             --warning: #ffb703;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: var(--bg-app); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        body { background-color: var(--bg-app); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; -webkit-font-smoothing: antialiased; }
         .container { background: var(--card-white); padding: 32px 24px; border-radius: 24px; width: 100%; max-width: 420px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04); border: 1px solid var(--border-soft); }
         .admin-container { max-width: 850px; width: 100%; border-radius: 24px; }
         header { text-align: left; margin-bottom: 28px; padding-left: 4px; }
@@ -33,11 +33,11 @@
         .btn-primary { background: var(--brand-gradient); color: #ffffff; }
         .btn-success { background: #0f172a; color: #ffffff; }
         .btn-outline { background: #ffffff; color: var(--text-main); border: 1px solid var(--border-soft); }
-        .btn-admin { background: transparent; color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 600; margin-top: 24px; border: 1px dashed var(--border-soft); }
+        .btn-admin { background: transparent; color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 600; margin-top: 24px; border: 1px dashed var(--border-soft); width: 100%; }
         .screen { display: none; }
         .active { display: block; }
         .nav-links { margin-top: 20px; text-align: center; font-size: 14px; color: var(--text-muted); }
-        .nav-links a { color: var(--brand-main); cursor: pointer; font-weight: 600; margin-left: 4px; }
+        .nav-links a { color: var(--brand-main); cursor: pointer; font-weight: 600; margin-left: 4px; text-decoration: none; }
         .nu-card { background: var(--brand-gradient); padding: 24px; border-radius: 20px; margin-bottom: 24px; color: #ffffff; position: relative; overflow: hidden; }
         .nu-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; }
         .nu-card-chip { width: 38px; height: 28px; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); border-radius: 6px; margin: 24px 0 8px 0; }
@@ -129,7 +129,7 @@
                     <div class="form-group" style="margin-bottom: 12px;">
                         <input type="number" id="loanAmount" placeholder="Valor do Empréstimo R$ 0,00">
                     </div>
-                    <button class="btn-primary" onclick="handleRequestLoan()" style="background:#5f259f; font-size:13px; padding:12px;">Solicitar Crédito Imediato</button>
+                    <button class="btn-primary" onclick="handleRequestLoan()" style="background:#5f259f; font-size:13px; padding:12px; margin-top:0;">Solicitar Crédito Imediato</button>
                 </div>
                 <div id="loanActiveStatus" style="display:none; font-size:13px; line-height:1.4;">
                     <p><strong>Empréstimo Ativo:</strong> <span id="txtLoanVal" style="color:var(--danger); font-weight:700;">R$ 0,00</span></p>
@@ -206,15 +206,18 @@
         }
 
         function switchScreen(screenId) {
+            var screens = document.querySelectorAll('.screen');
+            for (var i = 0; i < screens.length; i++) {
+                screens[i].style.display = 'none';
+                screens[i].classList.remove('active');
+            }
             if (screenId === 'screenAdmin') {
                 document.getElementById('mainContainer').style.display = 'none';
                 document.getElementById('screenAdmin').style.display = 'block';
             } else {
                 document.getElementById('mainContainer').style.display = 'block';
-                document.getElementById('screenAdmin').style.display = 'none';
-                var screens = document.querySelectorAll('#mainContainer .screen');
-                for (var i = 0; i < screens.length; i++) { screens[i].style.display = 'none'; }
                 document.getElementById(screenId).style.display = 'block';
+                document.getElementById(screenId).classList.add('active');
             }
         }
 
@@ -222,22 +225,14 @@
             var user = document.getElementById('regUser').value.trim();
             var pass = document.getElementById('regPass').value.trim();
             var btn = document.getElementById('btnRegister');
-            
             if (!user || !pass) { alert('Erro: Preencha todos os campos!'); return; }
             if (user.toLowerCase() === "bluezin") { alert('Erro: Nome reservado.'); return; }
             if (accounts[user]) { alert('Erro: Essa conta já existe!'); return; }
             
             btn.innerText = "Criando registro...";
             btn.disabled = true;
-
             setTimeout(function() {
-                accounts[user] = { 
-                    password: pass, 
-                    balance: 0, 
-                    approved: true, 
-                    history: [],
-                    loan: { hasLoan: false, amount: 0, dueDate: 0, dirty: false }
-                };
+                accounts[user] = { password: pass, balance: 0, approved: true, history: [], loan: { hasLoan: false, amount: 0, dueDate: 0, dirty: false } };
                 saveToStorage();
                 alert('Sua conta foi criada! Parabens!');
                 currentSessionUser = user;
@@ -253,7 +248,6 @@
             var user = document.getElementById('loginUser').value.trim();
             var pass = document.getElementById('loginPass').value.trim();
             if (!accounts[user] || accounts[user].password !== pass) { alert('Erro: Usuário ou senha incorretos.'); return; }
-            
             currentSessionUser = user;
             switchScreen('screenDashboard');
             checkLoanExpirations(); 
@@ -283,13 +277,11 @@
         function updateDashboard() {
             var userAcc = accounts[currentSessionUser];
             document.getElementById('accountOwner').innerText = 'Olá, ' + currentSessionUser;
-            
             var bal = userAcc.balance;
             document.getElementById('accountBalance').innerText = bal === Infinity ? 'Infinito' : 'R$ ' + bal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
             
             var badge = document.getElementById('loanStatusBadge');
             var btnPix = document.getElementById('btnEnvPix');
-            
             if (userAcc.loan && userAcc.loan.dirty) {
                 badge.innerText = "⚠️ NOME SUJO (DÍVIDA VENCIDA)";
                 badge.style.background = "var(--danger)";
@@ -306,7 +298,6 @@
 
             var formLoan = document.getElementById('loanAvailableForm');
             var statusLoan = document.getElementById('loanActiveStatus');
-            
             if (userAcc.loan && userAcc.loan.hasLoan) {
                 formLoan.style.display = "none";
                 statusLoan.style.display = "block";
@@ -319,6 +310,7 @@
             }
             renderExtrato();
         }
+
         function handleRequestLoan() {
             var amount = parseFloat(document.getElementById('loanAmount').value);
             var userAcc = accounts[currentSessionUser];
@@ -328,26 +320,21 @@
             var totalDebt = amount * 1.10; 
             var sevenDaysMs = 7 * 24 * 60 * 60 * 1000; 
             var futureDueDate = new Date().getTime() + sevenDaysMs;
-
             userAcc.balance += amount;
             userAcc.loan = { hasLoan: true, amount: totalDebt, dueDate: futureDueDate, dirty: false };
             userAcc.history.push({ type: 'Entrada', amount: amount, desc: 'Crédito Governamental Liberado' });
-            
             saveToStorage();
-            alert('Empréstimo liberado! Valor a pagar com juros: R\$ ' + totalDebt.toFixed(2));
+            alert('Empréstimo liberado! Valor a pagar com juros: R$ ' + totalDebt.toFixed(2));
             document.getElementById('loanAmount').value = '';
             updateDashboard();
         }
-
         function handlePayLoan() {
             var userAcc = accounts[currentSessionUser];
             var debt = userAcc.loan.amount;
-            if (userAcc.balance < debt) { alert("Saldo insuficiente para quitar a dívida total de R\$ " + debt.toFixed(2)); return; }
-            
+            if (userAcc.balance < debt) { alert("Saldo insuficiente para quitar a dívida!"); return; }
             userAcc.balance -= debt;
             userAcc.history.push({ type: 'Saída', amount: debt, desc: 'Quitação de Empréstimo Efetuada' });
             userAcc.loan = { hasLoan: false, amount: 0, dueDate: 0, dirty: false };
-            
             saveToStorage();
             alert("Parabéns! Sua dívida foi totalmente quitada.");
             updateDashboard();
@@ -366,18 +353,7 @@
                 var div = document.createElement('div');
                 div.className = 'extrato-item';
                 var isIn = item.type === 'Entrada';
-                var icon = isIn ? '↓' : '↑';
-                var iconClass = isIn ? 'icon-in' : 'icon-out';
-                var sinal = isIn ? '+' : '-';
-                var colorClass = isIn ? 'color: #0096c7;' : 'color: var(--danger);';
-                
-                div.innerHTML = `
-                    <div class="extrato-left">
-                        <div class="extrato-icon ${iconClass}">${icon}</div>
-                        <div class="extrato-desc">${item.desc}</div>
-                    </div>
-                    <div class="extrato-val" style="${colorClass}">${sinal} R$ ${item.amount.toFixed(2)}</div>
-                `;
+                div.innerHTML = `<div class="extrato-left"><div class="extrato-icon ${isIn ? 'icon-in' : 'icon-out'}">${isIn ? '↓' : '↑'}</div><div class="extrato-desc">${item.desc}</div></div><div class="extrato-val" style="color: ${isIn ? '#0096c7' : 'var(--danger)'};">${isIn ? '+' : '-'} R$ ${item.amount.toFixed(2)}</div>`;
                 list.appendChild(div);
             }
         }
@@ -386,7 +362,6 @@
             var target = document.getElementById('pixTarget').value.trim();
             var amount = parseFloat(document.getElementById('pixAmount').value);
             var userAcc = accounts[currentSessionUser];
-            
             if (userAcc.loan && userAcc.loan.dirty) { alert("Transação Bloqueada: Quite seu empréstimo vencido!"); return; }
             if (!target || isNaN(amount) || amount <= 0) { alert('Dados inválidos!'); return; }
             if (target === currentSessionUser) { alert('Não pode fazer Pix para você mesmo!'); return; }
@@ -395,13 +370,8 @@
 
             if (userAcc.balance !== Infinity) userAcc.balance -= amount;
             if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
-
-            userAcc.history = userAcc.history || [];
-            accounts[target].history = accounts[target].history || [];
-
             userAcc.history.push({ type: 'Saída', amount: amount, desc: 'Pix enviado para ' + target });
             accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Pix recebido de ' + currentSessionUser });
-
             saveToStorage();
             alert('Pix enviado com sucesso!');
             document.getElementById('pixTarget').value = '';
@@ -428,17 +398,18 @@
                 var acc = accounts[user];
                 var balShow = acc.balance === Infinity ? 'Infinito' : 'R\$ ' + acc.balance.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                 var debtShow = (acc.loan && acc.loan.hasLoan) ? 'R\$ ' + acc.loan.amount.toFixed(2) : 'R\$ 0,00';
-                var fiscalStatus = (acc.loan && acc.loan.dirty) ? '<span class="badge badge-debt">Nome Sujo</span>' : '<span class="badge badge-active">Limpo</span>';
                 
                 var tr = document.createElement('tr');
-                tr.innerHTML = `<td><strong>${user}</strong></td><td>${balShow}</td><td>${debtShow}</td><td>${fiscalStatus}</td><td><button class="actions-btn btn-delete" onclick="adminDelete('${user}')">Deletar</button></td>`;
+                var isDirty = acc.loan && acc.loan.dirty;
+                tr.innerHTML = `<td><strong>${user}</strong></td><td>${balShow}</td><td>${debtShow}</td><td><span class="badge ${isDirty ? 'badge-debt' : 'badge-active'}">${isDirty ? 'Nome Sujo' : 'Limpo'}</span></td><td><button class="actions-btn btn-delete">Deletar</button></td>`;
+                
+                let currentUser = user;
+                tr.querySelector('.btn-delete').addEventListener('click', function() {
+                    if(confirm('Remover o cidadão ' + currentUser + '?')) {
+                        delete accounts[currentUser]; saveToStorage(); renderAdminTable();
+                    }
+                });
                 tbody.appendChild(tr);
-            }
-        }
-
-        function adminDelete(user) {
-            if(confirm('Remover o cidadão ' + user + ' do sistema?')) {
-                delete accounts[user]; saveToStorage(); renderAdminTable();
             }
         }
 
@@ -447,11 +418,8 @@
             var amount = parseFloat(document.getElementById('adminAmount').value);
             if (!accounts[target]) { alert('Cidadão não encontrado!'); return; }
             if (isNaN(amount) || amount <= 0) { alert('Valor inválido!'); return; }
-            
             if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
-            accounts[target].history = accounts[target].history || [];
             accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Injeção de Capital Root' });
-            
             saveToStorage();
             alert('Capital emitido com sucesso!');
             document.getElementById('adminTarget').value = '';
