@@ -102,10 +102,10 @@
                 <input type="text" id="regUser" placeholder="Ex: Pedro_Silva">
             </div>
             <div class="form-group">
-                <label>Senha de Acesso</label>
+                <label>Defina sua Senha</label>
                 <input type="password" id="regPass" placeholder="Mínimo 4 caracteres">
             </div>
-            <button class="btn-primary" onclick="handleRegister()">Submeter Registro ao Bluezin</button>
+            <button class="btn-primary" id="btnRegister" onclick="handleRegister()">Criar Conta Corrente</button>
             <div class="nav-links">
                 <a onclick="switchScreen('screenLogin')">⬅ Voltar para o Login</a>
             </div>
@@ -171,7 +171,7 @@
                 <button class="btn-primary" onclick="handleAdminInject()">Confirmar Injeção Monetária</button>
             </div>
         </div>
-        <h3 style="margin-bottom: 15px; font-weight: 700;">Contas Cadastradas no País</h3>
+        <h3 style="margin-bottom: 15px; font-weight: 700;">Contas Cadastradas no País (Todas as Contas)</h3>
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -183,8 +183,15 @@
         <button class="btn-outline" onclick="logoutAdmin()" style="margin-top: 25px; max-width: 250px; display: block; margin-left: auto; margin-right: auto;">Encerrar Sessão Root</button>
     </div>
     <script>
-        var accounts = { "Bluezin": { password: "", balance: Infinity, approved: true, history: [] } };
+        // Carrega as contas do localStorage ou cria a conta master padrão do Bluezin
+        var accounts = JSON.parse(localStorage.getItem('brasiltopia_accounts')) || { 
+            "Bluezin": { password: "", balance: Infinity, approved: true, history: [] } 
+        };
         var currentSessionUser = null;
+
+        function saveToStorage() {
+            localStorage.setItem('brasiltopia_accounts', JSON.stringify(accounts));
+        }
 
         function switchScreen(screenId) {
             if (screenId === 'screenAdmin') {
@@ -202,22 +209,39 @@
         function handleRegister() {
             var user = document.getElementById('regUser').value.trim();
             var pass = document.getElementById('regPass').value.trim();
+            var btn = document.getElementById('btnRegister');
+            
             if (!user || !pass) { alert('Erro: Preencha todos os campos cadastrais!'); return; }
             if (user.toLowerCase() === "bluezin") { alert('Erro: Nome de usuário reservado ao Magistrado Supremo.'); return; }
             if (accounts[user]) { alert('Erro: Este cidadão já possui conta registrada!'); return; }
             
-            accounts[user] = { password: pass, balance: 0, approved: false, history: [] };
-            alert('Cadastro submetido com sucesso! Aguarde a homologação do Diretor Bluezin.');
-            document.getElementById('regUser').value = '';
-            document.getElementById('regPass').value = '';
-            switchScreen('screenLogin');
+            btn.innerText = "Processando Registro...";
+            btn.disabled = true;
+
+            setTimeout(function() {
+                // Conta criada e aprovada automaticamente por padrão do sistema
+                accounts[user] = { password: pass, balance: 0, approved: true, history: [] };
+                saveToStorage();
+                
+                alert('Sua conta foi criada! Parabens!');
+                
+                // Entra direto na conta recém-criada
+                currentSessionUser = user;
+                btn.innerText = "Criar Conta Corrente";
+                btn.disabled = false;
+                document.getElementById('regUser').value = '';
+                document.getElementById('regPass').value = '';
+                
+                switchScreen('screenDashboard');
+                updateDashboard();
+            }, 1000); // 1 segundo exato de espera
         }
 
         function handleLogin() {
             var user = document.getElementById('loginUser').value.trim();
             var pass = document.getElementById('loginPass').value.trim();
             if (!accounts[user] || accounts[user].password !== pass) { alert('Acesso Negado: Usuário ou senha incorretos.'); return; }
-            if (!accounts[user].approved) { alert('Acesso Bloqueado: Sua conta ainda não foi homologada pelo Magistrado Bluezin!'); return; }
+            if (!accounts[user].approved) { alert('Acesso Bloqueado: Conta inativa.'); return; }
             
             currentSessionUser = user;
             switchScreen('screenDashboard');
@@ -261,9 +285,13 @@
             if (accounts[currentSessionUser].balance !== Infinity) accounts[currentSessionUser].balance -= amount;
             if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
 
+            accounts[currentSessionUser].history = accounts[currentSessionUser].history || [];
+            accounts[target].history = accounts[target].history || [];
+
             accounts[currentSessionUser].history.push({ type: 'Saída', amount: amount, desc: 'Pix enviado para ' + target });
             accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Pix recebido de ' + currentSessionUser });
 
+            saveToStorage();
             alert('Pix Realizado! R$ ' + amount.toFixed(2) + ' foram transferidos para ' + target + ' com sucesso.');
             document.getElementById('pixTarget').value = '';
             document.getElementById('pixAmount').value = '';
@@ -276,7 +304,7 @@
                 currentSessionUser = "Bluezin";
                 switchScreen('screenAdmin');
                 renderAdminTable();
-            } else { alert("Falha crítica: Senha mestra incorreta. Tentativa registrada."); }
+            } else { alert("Falha crítica: Senha mestra incorreta."); }
         }
 
         function renderAdminTable() {
@@ -287,29 +315,31 @@
                 var user = keys[i];
                 if (user === "Bluezin") continue;
                 var acc = accounts[user];
-                var badge = acc.approved ? '<span class="badge badge-approved">Homologada</span>' : '<span class="badge badge-pending">Pendente</span>';
+                var badge = acc.approved ? '<span class="badge badge-approved">Ativa</span>' : '<span class="badge badge-pending">Bloqueada</span>';
                 var actionBtn = !acc.approved ? 
-                    '<button class="actions-btn btn-approve" onclick="adminToggleStatus(\''+user+'\', true)">Aprovar</button>' : 
+                    '<button class="actions-btn btn-approve" onclick="adminToggleStatus(\''+user+'\', true)">Ativar</button>' : 
                     '<button class="actions-btn btn-reject" onclick="adminToggleStatus(\''+user+'\', false)">Bloquear</button>';
                 var balShow = acc.balance === Infinity ? 'Infinito' : 'R$ ' + acc.balance.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                 var tr = document.createElement('tr');
-                tr.innerHTML = '<td><strong>' + user + '</strong></td><td>' + balShow + '</td><td>' + badge + '</td><td>' + actionBtn + '<button class="actions-btn btn-delete" onclick="adminDelete(\''+user+'\')">Deletar permanentemente</button></td>';
+                tr.innerHTML = '<td><strong>' + user + '</strong></td><td>' + balShow + '</td><td>' + badge + '</td><td>' + actionBtn + '<button class="actions-btn btn-delete" onclick="adminDelete(\''+user+'\')">Deletar</button></td>';
                 tbody.appendChild(tr);
             }
         }
 
-        function adminToggleStatus(user, status) { accounts[user].approved = status; renderAdminTable(); }
-        function adminDelete(user) { if(confirm('Remover o cidadão ' + user + ' do banco de dados nacional?')) { delete accounts[user]; renderAdminTable(); } }
+        function adminToggleStatus(user, status) { accounts[user].approved = status; saveToStorage(); renderAdminTable(); }
+        function adminDelete(user) { if(confirm('Remover o cidadão ' + user + ' do sistema?')) { delete accounts[user]; saveToStorage(); renderAdminTable(); } }
 
         function handleAdminInject() {
             var target = document.getElementById('adminTarget').value.trim();
             var amount = parseFloat(document.getElementById('adminAmount').value);
-            if (!accounts[target]) { alert('Erro de Emissão: Cidadão beneficiário não localizado no sistema.'); return; }
+            if (!accounts[target]) { alert('Erro de Emissão: Cidadão não localizado no sistema.'); return; }
             if (isNaN(amount) || amount <= 0) { alert('Erro: Quantidade monetária inválida.'); return; }
             
             if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
+            accounts[target].history = accounts[target].history || [];
             accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Capital injetado pelo Banco Central' });
             
+            saveToStorage();
             alert('Sucesso! R$ ' + amount.toLocaleString('pt-BR') + ' foram injetados no saldo de ' + target + '.');
             document.getElementById('adminTarget').value = '';
             document.getElementById('adminAmount').value = '';
