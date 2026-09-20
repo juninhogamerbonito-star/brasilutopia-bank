@@ -18,66 +18,56 @@
             --warning: #ffb703;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: var(--bg-app); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; -webkit-font-smoothing: antialiased; }
-        .container { background: var(--card-white); padding: 32px 24px; border-radius: 24px; width: 100%; max-width: 420px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04), 0 2px 8px rgba(15, 23, 42, 0.02); border: 1px solid var(--border-soft); transition: all 0.3s ease; }
+        body { background-color: var(--bg-app); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        .container { background: var(--card-white); padding: 32px 24px; border-radius: 24px; width: 100%; max-width: 420px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04); border: 1px solid var(--border-soft); }
         .admin-container { max-width: 850px; width: 100%; border-radius: 24px; }
         header { text-align: left; margin-bottom: 28px; padding-left: 4px; }
-        .logo-tag { display: inline-block; background: rgba(109, 40, 217, 0.08); color: var(--brand-main); font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-        h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; color: #0f172a; }
+        .logo-tag { display: inline-block; background: rgba(109, 40, 217, 0.08); color: var(--brand-main); font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 100px; text-transform: uppercase; margin-bottom: 12px; }
+        h1 { font-size: 24px; font-weight: 700; color: #0f172a; }
         header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
-        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 12px; font-weight: 600; }
-        input { width: 100%; padding: 16px; background: #f8fafc; border: 1px solid var(--border-soft); border-radius: 16px; color: var(--text-main); font-size: 15px; font-weight: 500; transition: all 0.2s ease; }
+        input { width: 100%; padding: 16px; background: #f8fafc; border: 1px solid var(--border-soft); border-radius: 16px; color: var(--text-main); font-size: 15px; }
         input:focus { outline: none; border-color: var(--brand-main); background: #ffffff; box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.1); }
-        button { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-top: 8px; }
+        button { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; }
         .btn-primary { background: var(--brand-gradient); color: #ffffff; }
-        .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); }
         .btn-success { background: #0f172a; color: #ffffff; }
-        .btn-success:hover { background: #1e293b; }
         .btn-outline { background: #ffffff; color: var(--text-main); border: 1px solid var(--border-soft); }
-        .btn-outline:hover { background: #f8fafc; }
-        .btn-admin { background: transparent; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 24px; border: 1px dashed var(--border-soft); }
-        .btn-admin:hover { border-color: var(--brand-main); color: var(--brand-main); background: rgba(109, 40, 217, 0.02); }
+        .btn-admin { background: transparent; color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 600; margin-top: 24px; border: 1px dashed var(--border-soft); }
         .screen { display: none; }
         .active { display: block; }
-        
-        .nu-card { background: var(--brand-gradient); padding: 24px; border-radius: 20px; margin-bottom: 24px; color: #ffffff; position: relative; overflow: hidden; box-shadow: 0 8px 24px rgba(109, 40, 217, 0.15); }
-        .nu-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.04); border-radius: 50%; }
-        .nu-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; opacity: 0.8; letter-spacing: 1px; }
+        .nav-links { margin-top: 20px; text-align: center; font-size: 14px; color: var(--text-muted); }
+        .nav-links a { color: var(--brand-main); cursor: pointer; font-weight: 600; margin-left: 4px; }
+        .nu-card { background: var(--brand-gradient); padding: 24px; border-radius: 20px; margin-bottom: 24px; color: #ffffff; position: relative; overflow: hidden; }
+        .nu-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; }
         .nu-card-chip { width: 38px; height: 28px; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); border-radius: 6px; margin: 24px 0 8px 0; }
-        .nu-card .label-saldo { font-size: 13px; opacity: 0.7; font-weight: 500; margin-bottom: 2px; }
-        .nu-card .amount { font-size: 30px; font-weight: 700; letter-spacing: -0.5px; }
-        .nu-card .owner-name { font-size: 14px; opacity: 0.9; margin-top: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        
-        .section-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 12px; padding-left: 2px; }
+        .nu-card .label-saldo { font-size: 13px; opacity: 0.7; }
+        .nu-card .amount { font-size: 30px; font-weight: 700; }
+        .nu-card .owner-name { font-size: 14px; margin-top: 16px; font-weight: 600; }
+        .section-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 12px; }
         .app-box { background: #f8fafc; padding: 16px; border-radius: 18px; border: 1px solid var(--border-soft); margin-bottom: 20px; }
-        
-        .extrato-container { max-height: 140px; overflow-y: auto; padding-right: 4px; }
+        .extrato-container { max-height: 140px; overflow-y: auto; }
         .extrato-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-        .extrato-item:last-child { border-bottom: none; }
         .extrato-left { display: flex; align-items: center; gap: 10px; }
         .extrato-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; }
         .icon-in { background: rgba(0, 180, 216, 0.1); color: #0096c7; }
         .icon-out { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
         .extrato-desc { font-weight: 500; color: #334155; }
-        .extrato-val { font-weight: 600; text-align: right; }
-        
+        .extrato-val { font-weight: 600; }
         .admin-grid { display: flex; gap: 16px; margin-bottom: 24px; }
         .admin-grid .nu-card { flex: 1; margin-bottom: 0; }
         .table-wrapper { overflow-x: auto; background: #ffffff; border-radius: 16px; border: 1px solid var(--border-soft); }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border-soft); color: var(--text-main); }
-        th { background: #f8fafc; color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+        th, td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border-soft); }
+        th { background: #f8fafc; color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; }
         .badge { padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
         .badge-active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
         .badge-debt { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-        .actions-btn { padding: 6px 12px; font-size: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .actions-btn { padding: 6px 12px; font-size: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; }
         .btn-delete { background: rgba(239, 68, 68, 0.08); color: var(--danger); }
-        .btn-delete:hover { background: var(--danger); color: #ffffff; }
     </style>
 </head>
 <body>
-    <!-- CONTAINER DO CLIENTE -->
     <div class="container" id="mainContainer">
         <header>
             <span class="logo-tag">Brasiltopia Premium</span>
@@ -131,7 +121,7 @@
                 <div class="owner-name" id="accountOwner">Olá, Jogador</div>
             </div>
 
-            <!-- NOVA SEÇÃO: EMPRÉSTIMO GOVERNAMENTAL -->
+            <!-- EMPRÉSTIMO GOVERNAMENTAL -->
             <div class="section-title">Crédito Sob Demanda (7 dias)</div>
             <div class="app-box" id="loanBoxContent">
                 <div id="loanAvailableForm">
@@ -162,13 +152,12 @@
             <div class="section-title">Histórico de Transações</div>
             <div class="app-box">
                 <div class="extrato-container" id="extratoList">
-                    <div style="color: var(--text-muted); text-align: center; padding-top: 15px; font-size: 13px;">Sem movimentações registradas.</div>
+                    <div style="color: var(--text-muted); text-align: center; padding-top: 15px; font-size: 13px;">Sem movimentações recentes.</div>
                 </div>
             </div>
             <button class="btn-outline" onclick="logout()">Sair da Conta</button>
         </div>
     </div>
-
     <!-- TELA DO ADMINISTRADOR -->
     <div class="container admin-container screen" id="screenAdmin">
         <header>
@@ -194,7 +183,7 @@
             </div>
             <button class="btn-primary" onclick="handleAdminInject()" style="margin-top: 12px;">Autorizar Emissão de Crédito</button>
         </div>
-        <div class="section-title">Relatório de Inadimplência e Contas Ativas</div>
+        <div class="section-title">Relatório de Inadimplência e Contas Ativas (Todas as Contas)</div>
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -205,6 +194,7 @@
         </div>
         <button class="btn-outline" onclick="logoutAdmin()" style="margin-top: 24px;">Fechar Painel de Auditoria</button>
     </div>
+
     <script>
         var accounts = JSON.parse(localStorage.getItem('brasiltopia_accounts')) || { 
             "Bluezin": { password: "", balance: Infinity, approved: true, history: [], loan: { hasLoan: false, amount: 0, dueDate: 0, dirty: false } } 
@@ -249,20 +239,16 @@
                     loan: { hasLoan: false, amount: 0, dueDate: 0, dirty: false }
                 };
                 saveToStorage();
-                
                 alert('Sua conta foi criada! Parabens!');
-                
                 currentSessionUser = user;
                 btn.innerText = "Criar Conta Agora";
                 btn.disabled = false;
                 document.getElementById('regUser').value = '';
                 document.getElementById('regPass').value = '';
-                
                 switchScreen('screenDashboard');
                 updateDashboard();
             }, 1000);
         }
-
         function handleLogin() {
             var user = document.getElementById('loginUser').value.trim();
             var pass = document.getElementById('loginPass').value.trim();
@@ -270,26 +256,23 @@
             
             currentSessionUser = user;
             switchScreen('screenDashboard');
-            checkLoanExpirations(); // Trava a conta se o prazo de 7 dias venceu
+            checkLoanExpirations(); 
             updateDashboard();
         }
 
-        // Motor Inteligente de Verificação de Tempo de Empréstimo
         function checkLoanExpirations() {
             if (!currentSessionUser || currentSessionUser === "Bluezin") return;
             var userAcc = accounts[currentSessionUser];
             if (userAcc.loan && userAcc.loan.hasLoan) {
                 var now = new Date().getTime();
                 if (now > userAcc.loan.dueDate) {
-                    // O prazo de 7 dias venceu! Tentativa de auto-cobrança
                     var totalDebt = userAcc.loan.amount;
                     if (userAcc.balance >= totalDebt) {
                         userAcc.balance -= totalDebt;
                         userAcc.history.push({ type: 'Saída', amount: totalDebt, desc: 'Débito Automático: Quitação de Empréstimo' });
                         userAcc.loan = { hasLoan: false, amount: 0, dueDate: 0, dirty: false };
-                        alert("Aviso Fiscal: O prazo de 7 dias do seu empréstimo venceu. O saldo foi debitado automaticamente e sua conta continua limpa!");
+                        alert("Aviso Fiscal: O prazo de 7 dias do seu empréstimo venceu. O saldo foi debitado automaticamente!");
                     } else {
-                        // Saldo insuficiente = Nome Sujo e bloqueios no RP!
                         userAcc.loan.dirty = true;
                     }
                     saveToStorage();
@@ -304,7 +287,6 @@
             var bal = userAcc.balance;
             document.getElementById('accountBalance').innerText = bal === Infinity ? 'Infinito' : 'R$ ' + bal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
             
-            // Gerencia os avisos visuais do painel de crédito
             var badge = document.getElementById('loanStatusBadge');
             var btnPix = document.getElementById('btnEnvPix');
             
@@ -322,7 +304,6 @@
                 btnPix.style.background = "";
             }
 
-            // Exibe as caixas de empréstimo corretas
             var formLoan = document.getElementById('loanAvailableForm');
             var statusLoan = document.getElementById('loanActiveStatus');
             
@@ -336,32 +317,24 @@
                 formLoan.style.display = "block";
                 statusLoan.style.display = "none";
             }
-
             renderExtrato();
         }
-
         function handleRequestLoan() {
             var amount = parseFloat(document.getElementById('loanAmount').value);
             var userAcc = accounts[currentSessionUser];
-            
             if (isNaN(amount) || amount <= 0) { alert("Digite um valor válido!"); return; }
             if (userAcc.loan && userAcc.loan.hasLoan) { alert("Você já possui um empréstimo ativo!"); return; }
             
-            var totalDebt = amount * 1.10; // Aplica 10% de juros governamentais
-            var sevenDaysMs = 7 * 24 * 60 * 60 * 1000; // Tempo de 7 dias convertido em milissegundos
+            var totalDebt = amount * 1.10; 
+            var sevenDaysMs = 7 * 24 * 60 * 60 * 1000; 
             var futureDueDate = new Date().getTime() + sevenDaysMs;
 
             userAcc.balance += amount;
-            userAcc.loan = {
-                hasLoan: true,
-                amount: totalDebt,
-                dueDate: futureDueDate,
-                dirty: false
-            };
+            userAcc.loan = { hasLoan: true, amount: totalDebt, dueDate: futureDueDate, dirty: false };
             userAcc.history.push({ type: 'Entrada', amount: amount, desc: 'Crédito Governamental Liberado' });
             
             saveToStorage();
-            alert('Empréstimo liberado! R$ ' + amount.toFixed(2) + ' caíram na conta. Valor a pagar em 7 dias com juros: R$ ' + totalDebt.toFixed(2));
+            alert('Empréstimo liberado! Valor a pagar com juros: R\$ ' + totalDebt.toFixed(2));
             document.getElementById('loanAmount').value = '';
             updateDashboard();
         }
@@ -369,15 +342,14 @@
         function handlePayLoan() {
             var userAcc = accounts[currentSessionUser];
             var debt = userAcc.loan.amount;
-            
-            if (userAcc.balance < debt) { alert("Saldo insuficiente para quitar a dívida total de R$ " + debt.toFixed(2)); return; }
+            if (userAcc.balance < debt) { alert("Saldo insuficiente para quitar a dívida total de R\$ " + debt.toFixed(2)); return; }
             
             userAcc.balance -= debt;
             userAcc.history.push({ type: 'Saída', amount: debt, desc: 'Quitação de Empréstimo Efetuada' });
             userAcc.loan = { hasLoan: false, amount: 0, dueDate: 0, dirty: false };
             
             saveToStorage();
-            alert("Parabéns! Sua dívida foi totalmente quitada e sua conta está limpa.");
+            alert("Parabéns! Sua dívida foi totalmente quitada.");
             updateDashboard();
         }
 
@@ -407,3 +379,88 @@
                     <div class="extrato-val" style="${colorClass}">${sinal} R$ ${item.amount.toFixed(2)}</div>
                 `;
                 list.appendChild(div);
+            }
+        }
+
+        function handleTransfer() {
+            var target = document.getElementById('pixTarget').value.trim();
+            var amount = parseFloat(document.getElementById('pixAmount').value);
+            var userAcc = accounts[currentSessionUser];
+            
+            if (userAcc.loan && userAcc.loan.dirty) { alert("Transação Bloqueada: Quite seu empréstimo vencido!"); return; }
+            if (!target || isNaN(amount) || amount <= 0) { alert('Dados inválidos!'); return; }
+            if (target === currentSessionUser) { alert('Não pode fazer Pix para você mesmo!'); return; }
+            if (!accounts[target]) { alert('Cidadão não encontrado!'); return; }
+            if (userAcc.balance !== Infinity && userAcc.balance < amount) { alert('Saldo insuficiente!'); return; }
+
+            if (userAcc.balance !== Infinity) userAcc.balance -= amount;
+            if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
+
+            userAcc.history = userAcc.history || [];
+            accounts[target].history = accounts[target].history || [];
+
+            userAcc.history.push({ type: 'Saída', amount: amount, desc: 'Pix enviado para ' + target });
+            accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Pix recebido de ' + currentSessionUser });
+
+            saveToStorage();
+            alert('Pix enviado com sucesso!');
+            document.getElementById('pixTarget').value = '';
+            document.getElementById('pixAmount').value = '';
+            updateDashboard();
+        }
+
+        function openAdminModal() {
+            var masterPass = prompt("Autenticação Root Magistrado:");
+            if (masterPass === "Brasiltopia303526") {
+                currentSessionUser = "Bluezin";
+                switchScreen('screenAdmin');
+                renderAdminTable();
+            } else { alert("Acesso negado."); }
+        }
+
+        function renderAdminTable() {
+            var tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+            var keys = Object.keys(accounts);
+            for (var i = 0; i < keys.length; i++) {
+                var user = keys[i];
+                if (user === "Bluezin") continue;
+                var acc = accounts[user];
+                var balShow = acc.balance === Infinity ? 'Infinito' : 'R\$ ' + acc.balance.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                var debtShow = (acc.loan && acc.loan.hasLoan) ? 'R\$ ' + acc.loan.amount.toFixed(2) : 'R\$ 0,00';
+                var fiscalStatus = (acc.loan && acc.loan.dirty) ? '<span class="badge badge-debt">Nome Sujo</span>' : '<span class="badge badge-active">Limpo</span>';
+                
+                var tr = document.createElement('tr');
+                tr.innerHTML = `<td><strong>${user}</strong></td><td>${balShow}</td><td>${debtShow}</td><td>${fiscalStatus}</td><td><button class="actions-btn btn-delete" onclick="adminDelete('${user}')">Deletar</button></td>`;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function adminDelete(user) {
+            if(confirm('Remover o cidadão ' + user + ' do sistema?')) {
+                delete accounts[user]; saveToStorage(); renderAdminTable();
+            }
+        }
+
+        function handleAdminInject() {
+            var target = document.getElementById('adminTarget').value.trim();
+            var amount = parseFloat(document.getElementById('adminAmount').value);
+            if (!accounts[target]) { alert('Cidadão não encontrado!'); return; }
+            if (isNaN(amount) || amount <= 0) { alert('Valor inválido!'); return; }
+            
+            if (accounts[target].balance !== Infinity) accounts[target].balance += amount;
+            accounts[target].history = accounts[target].history || [];
+            accounts[target].history.push({ type: 'Entrada', amount: amount, desc: 'Injeção de Capital Root' });
+            
+            saveToStorage();
+            alert('Capital emitido com sucesso!');
+            document.getElementById('adminTarget').value = '';
+            document.getElementById('adminAmount').value = '';
+            renderAdminTable();
+        }
+
+        function logout() { currentSessionUser = null; switchScreen('screenLogin'); }
+        function logoutAdmin() { currentSessionUser = null; switchScreen('screenLogin'); }
+    </script>
+</body>
+</html>
