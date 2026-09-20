@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brasiltopia Bank</title>
+    <style>
+        :root { --bg: #0a192f; --card: #172a45; --accent: #00b4d8; --gold: #ffb703; --success: #2ec4b6; --danger: #e63946; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: var(--bg); color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: var(--card); padding: 30px; border-radius: 12px; width: 100%; max-width: 440px; border: 1px solid #233554; }
+        .admin-container { max-width: 800px; width: 100%; }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { color: #fff; font-size: 24px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #8892b0; font-size: 12px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; background: var(--bg); border: 1px solid #233554; border-radius: 6px; color: #fff; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-primary { background: var(--accent); color: var(--bg); }
+        .btn-success { background: var(--success); color: var(--bg); }
+        .btn-outline { background: transparent; color: #8892b0; border: 1px solid #233554; }
+        .btn-admin { background: transparent; color: var(--gold); border: 1px solid var(--gold); margin-top: 20px; }
+        .screen { display: none; }
+        .active { display: block; }
+        .nav-links { margin-top: 15px; text-align: center; font-size: 14px; }
+        .nav-links a { color: var(--accent); cursor: pointer; text-decoration: none; }
+        .balance-card { background: linear-gradient(135deg, #1e3a8a, #0d9488); padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: left; }
+        .balance-card .amount { font-size: 32px; font-weight: bold; margin-top: 5px; color: #fff; }
+        .transaction-box, .injection-box { background: rgba(35,53,84,0.3); padding: 15px; border-radius: 8px; border: 1px solid #233554; margin-bottom: 15px; }
+        .admin-grid { display: flex; gap: 15px; margin-bottom: 20px; }
+        .table-wrapper { overflow-x: auto; background: rgba(10,25,47,0.5); border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px; font-size: 14px; border-bottom: 1px solid #233554; color: #fff; }
+        th { background: rgba(35,53,84,0.5); color: #8892b0; }
+        .badge { padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-pending { background: rgba(255,183,3,0.15); color: var(--gold); }
+        .badge-approved { background: rgba(46,196,182,0.15); color: var(--success); }
+        .actions-btn { padding: 4px 8px; font-size: 12px; width: auto; margin-right: 5px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; display: inline-block; }
+        .btn-approve { background: var(--success); color: var(--bg); }
+        .btn-reject { background: var(--gold); color: var(--bg); }
+        .btn-delete { background: var(--danger); color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <header>
+            <h1>Brasiltopia Bank</h1>
+            <p style="color: #8892b0; font-size: 14px;">Sistema Financeiro</p>
+        </header>
+        <div id="screenLogin" class="screen active">
+            <div class="form-group">
+                <label>Nome do Usuário</label>
+                <input type="text" id="loginUser" placeholder="Digite seu usuário">
+            </div>
+            <div class="form-group">
+                <label>Senha de Acesso</label>
+                <input type="password" id="loginPass" placeholder="Digite sua senha">
+            </div>
+            <button class="btn-primary" onclick="handleLogin()">Entrar</button>
+            <div class="nav-links">
+                <p>Novo por aqui? <a onclick="switchScreen('screenRegister')">Criar conta</a></p>
+            </div>
+            <button class="btn-admin" onclick="openAdminModal()">💼 PAINEL DE ADMINISTRAÇÃO</button>
+        </div>
+        <div id="screenRegister" class="screen">
+            <div class="form-group">
+                <label>Nome de Usuário Desejado</label>
+                <input type="text" id="regUser" placeholder="Ex: Pedro">
+            </div>
+            <div class="form-group">
+                <label>Defina sua Senha</label>
+                <input type="password" id="regPass" placeholder="Mínimo 4 dígitos">
+            </div>
+            <button class="btn-primary" onclick="handleRegister()">Submeter ao Bluezin</button>
+            <div class="nav-links"><a onclick="switchScreen('screenLogin')"> Voltar</a></div>
+        </div>
+        <div id="screenDashboard" class="screen">
+            <div class="balance-card">
+                <div id="accountOwner">Olá</div>
+                <div class="amount" id="accountBalance">R$ 0,00</div>
+            </div>
+            <div class="transaction-box">
+                <h3 style="font-size: 16px; margin-bottom: 10px;">Enviar Pix</h3>
+                <div class="form-group">
+                    <label>Conta Destino</label>
+                    <input type="text" id="pixTarget" placeholder="Nome exato">
+                </div>
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="pixAmount" placeholder="0,00">
+                </div>
+                <button class="btn-success" onclick="handleTransfer()">Transferir</button>
+            </div>
+            <button class="btn-outline" onclick="logout()">Sair</button>
+        </div>
+    </div>
+    <div class="container admin-container screen" id="screenAdmin">
+        <header><h1>Painel do Magistrado Bluezin</h1></header>
+        <div class="admin-grid">
+            <div class="balance-card" style="flex:1; background: #233554; padding: 20px;">
+                <div>Permissão</div>
+                <div style="font-size: 20px; font-weight: bold; margin-top:5px;">Diretor Root</div>
+            </div>
+            <div class="balance-card" style="flex:1; background: #14532d; padding: 20px;">
+                <div>Seu Saldo</div>
+                <div class="amount" style="font-size: 24px;">Inf</div>
+            </div>
+        </div>
+        <div class="injection-box">
+            <h3 style="font-size: 16px; margin-bottom: 10px;">Injetar Saldo</h3>
+            <div class="injection-form">
+                <input type="text" id="adminTarget" placeholder="Usuário" style="margin-bottom: 10px;">
+                <input type="number" id="adminAmount" placeholder="Valor (R$)" style="margin-bottom: 10px;">
+                <button class="btn-primary" onclick="handleAdminInject()">Confirmar Injeção</button>
+            </div>
+        </div>
+        <h3 style="margin-bottom: 10px;">Contas do Servidor</h3>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Cidadão</th><th>Saldo</th><th>Status</th><th>Ações</th></tr></thead>
+                <tbody id="adminTableBody"></tbody>
+            </table>
+        </div>
+        <button class="btn-outline" onclick="logoutAdmin()" style="margin-top:20px;">Fechar Painel</button>
+    </div>
+    <script>
+        var accounts = { "Bluezin": { password: "", balance: Infinity, approved: true } };
+        var currentSessionUser = null;
+
+        function switchScreen(screenId) {
+            if (screenId === 'screenAdmin') {
+                document.getElementById('mainContainer').style.display = 'none';
+                document.getElementById('screenAdmin').style.display = 'block';
+            } else {
+                document.getElementById('mainContainer').style.display = 'block';
+                document.getElementById('screenAdmin').style.display = 'none';
+                var screens = document.querySelectorAll('#mainContainer .screen');
+                for (var i = 0; i < screens.length; i++) { screens[i].style.display = 'none'; }
+                document.getElementById(screenId).style.display = 'block';
+            }
+        }
+
+        function handleRegister() {
+            var user = document.getElementById('regUser').value.trim();
+            var pass = document.getElementById('regPass').value.trim();
+            if (!user || !pass) { alert('Preencha os campos!'); return; }
+            if (accounts[user]) { alert('Esta conta já existe!'); return; }
+            accounts[user] = { password: pass, balance: 0, approved: false };
+            alert('Enviado! Aguarde a aprovação do Bluezin.');
+            document.getElementById('regUser').value = '';
+            document.getElementById('regPass').value = '';
+            switchScreen('screenLogin');
+        }
+
+        function handleLogin() {
+            var user = document.getElementById('loginUser').value.trim();
+            var pass = document.getElementById('loginPass').value.trim();
+            if (!accounts[user] || accounts[user].password !== pass) { alert('Usuário ou senha incorretos.'); return; }
+            if (!accounts[user].approved) { alert('Conta pendente de aprovação do Bluezin!'); return; }
+            currentSessionUser = user;
+            switchScreen('screenDashboard');
+            document.getElementById('accountOwner').innerText = 'Olá, ' + currentSessionUser;
+            var bal = accounts[currentSessionUser].balance;
+            document.getElementById('accountBalance').innerText = 'R$ ' + bal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        }
+
+        function handleTransfer() {
+            var target = document.getElementById('pixTarget').value.trim();
+            var amount = parseFloat(document.getElementById('pixAmount').value);
+            if (!target || isNaN(amount) || amount <= 0) { alert('Valores inválidos!'); return; }
+            if (!accounts[target] || !accounts[target].approved) { alert('Destino inválido!'); return; }
+            if (accounts[currentSessionUser].balance < amount) { alert('Saldo insuficiente!'); return; }
+            accounts[currentSessionUser].balance -= amount;
+            accounts[target].balance += amount;
+            alert('Pix enviado!');
+            document.getElementById('pixTarget').value = '';
+            document.getElementById('pixAmount').value = '';
+            document.getElementById('accountBalance').innerText = 'R$ ' + accounts[currentSessionUser].balance.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        }
+
+        function openAdminModal() {
+            var masterPass = prompt("Insira a Senha Mestra:");
+            if (masterPass === "Brasiltopia303526") {
+                currentSessionUser = "Bluezin";
+                switchScreen('screenAdmin');
+                renderAdminTable();
+            } else { alert("Senha incorreta!"); }
+        }
+
+        function renderAdminTable() {
+            var tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+            var keys = Object.keys(accounts);
+            for (var i = 0; i < keys.length; i++) {
+                var user = keys[i];
+                if (user === "Bluezin") continue;
+                var acc = accounts[user];
+                var badge = acc.approved ? '<span class="badge badge-approved">Ativa</span>' : '<span class="badge badge-pending">Pendente</span>';
+                var actionBtn = !acc.approved ? 
+                    '<button class="actions-btn btn-approve" onclick="adminToggleStatus(\''+user+'\', true)">Aprovar</button>' : 
+                    '<button class="actions-btn btn-reject" onclick="adminToggleStatus(\''+user+'\', false)">Bloquear</button>';
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + user + '</td><td>R$ ' + acc.balance + '</td><td>' + badge + '</td><td>' + actionBtn + '<button class="actions-btn btn-delete" onclick="adminDelete(\''+user+'\')">Deletar</button></td>';
+                tbody.appendChild(tr);
+            }
+        }
+
+        function adminToggleStatus(user, status) { accounts[user].approved = status; renderAdminTable(); }
+        function adminDelete(user) { delete accounts[user]; renderAdminTable(); }
+
+        function handleAdminInject() {
+            var target = document.getElementById('adminTarget').value.trim();
+            var amount = parseFloat(document.getElementById('adminAmount').value);
+            if (!accounts[target]) { alert('Usuário não achado!'); return; }
+            if (isNaN(amount) || amount <= 0) { alert('Valor inválido!'); return; }
+            accounts[target].balance += amount;
+            alert('Injetado!');
+            document.getElementById('adminTarget').value = '';
+            document.getElementById('adminAmount').value = '';
+            renderAdminTable();
+        }
+
+        function logout() { currentSessionUser = null; switchScreen('screenLogin'); }
+        function logoutAdmin() { currentSessionUser = null; switchScreen('screenLogin'); }
+    </script>
+</body>
+</html>
+
